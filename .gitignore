@@ -1,3 +1,2 @@
-
-database/_temp/*.jpg
-database/_temp/*.png
+database/*
+recognizer/__pycache__

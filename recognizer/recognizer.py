@@ -53,7 +53,7 @@ while True:
             _id = "unknown"
             confidence = f'  {confidence:.1f}%'
         
-        cv2.putText(img, str(id), (x+5, y-5), font, 1, (255, 255, 255), 2)
+        cv2.putText(img, str(_id), (x+5, y-5), font, 1, (255, 255, 255), 2)
         cv2.putText(img, str(confidence), (x+5, y+h-5), font, 1, (255, 255, 0), 1)  
     
     cv2.imshow('camera with recognition',img) 
