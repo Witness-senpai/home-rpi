@@ -1,2 +1,3 @@
 
-database/_temp/
+database/_temp/*.jpg
+database/_temp/*.png
