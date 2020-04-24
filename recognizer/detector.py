@@ -1,10 +1,17 @@
+import logging
+
 import numpy as np
 import cv2
 
 CASCADE_PATH = '/home/pi/Public/opencv/opencv-4.2.0/data/haarcascades/haarcascade_frontalface_default.xml' 
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+        level='INFO',
+        format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
 
 def face_demo():
+    logger.info('Start demo camera view')
     faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
     cap = cv2.VideoCapture(0)
@@ -35,3 +42,7 @@ def face_demo():
 
     cap.release()
     cv2.destroyAllWindows()
+    logger.info('Stop demo camera view')
+
+if __name__ == '__main__':
+    face_demo()
