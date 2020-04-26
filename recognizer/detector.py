@@ -15,8 +15,8 @@ def face_demo():
     faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
     cap = cv2.VideoCapture(0)
-    cap.set(3, 640) # set Width
-    cap.set(4, 480) # set Height
+    cap.set(3, 2560) # set Width
+    cap.set(4, 1440) # set Height
 
     while True:
         ret, img = cap.read()
@@ -26,7 +26,7 @@ def face_demo():
             gray,
             scaleFactor=1.2,
             minNeighbors=5,     
-            minSize=(40, 40)
+            minSize=(100, 100)
         )
 
         for (x, y, w, h) in faces:
@@ -36,7 +36,7 @@ def face_demo():
             
         cv2.imshow('Demo face view', img)
 
-        k = cv2.waitKey(30) & 0xff
+        k = cv2.waitKey(50) & 0xff
         if k == 27: # press 'ESC' to quit
             break
 

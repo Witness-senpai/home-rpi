@@ -9,9 +9,9 @@ from detector import CASCADE_PATH, face_demo
 
 
 # Path for face image database
-MODEL_PATH = 'database/models/model.yml'
+MODEL_PATH = 'database/model/model.yml'
 TEMP_IMG_PATH = 'database/_temp'
-SAMPLES_FOR_TRAINING = 30
+SAMPLES_FOR_TRAINING = 50
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -56,8 +56,8 @@ def get_imgs_and_labels(path, detector):
 # Fucntion to save images of face from camera to temp folder 
 def save_imgs_from_cam(samples=SAMPLES_FOR_TRAINING):
     cam = cv2.VideoCapture(0)
-    cam.set(3, 640) # set video width
-    cam.set(4, 480) # set video height
+    cam.set(3, 2560) # set video width
+    cam.set(4, 1440) # set video height
 
     face_detector = cv2.CascadeClassifier(CASCADE_PATH)
 
@@ -79,7 +79,7 @@ def save_imgs_from_cam(samples=SAMPLES_FOR_TRAINING):
 
                 # Save the captured image into the datasets folder
                 file_name = f'{TEMP_IMG_PATH}/user.{face_id}.{count}.jpg'
-                cv2.imwrite(file_name, gray[y:y+h,x:x+w])
+                cv2.imwrite(file_name, gray[y: y+h, x: x+w])
                 cv2.imshow('image', img)
                 logger.info(f'Saving {file_name}')
 

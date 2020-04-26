@@ -26,12 +26,12 @@ names = ['u0', 'u1', 'u2', 'u3']
 
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(0)
-cam.set(3, 640) # set video widht
-cam.set(4, 480) # set video height
+cam.set(3, 2560) # set video widht
+cam.set(4, 1440) # set video height
 
 # Define min window size to be recognized as a face
-minW = 59
-minH = 50
+minW = 100
+minH = 100
 while True:
     ret, img = cam.read()
     img = cv2.flip(img, -1) # Flip vertically
@@ -41,7 +41,7 @@ while True:
     faces = faceCascade.detectMultiScale( 
         gray,
         scaleFactor = 1.5,
-        minNeighbors = 4,
+        minNeighbors = 5,
         minSize = (int(minW), int(minH)),
     )
 
@@ -53,10 +53,10 @@ while True:
         # Check if confidence is less them 100 ==> "0" is perfect match 
         if (confidence < 100):
             _id = names[_id]
-            confidence = f'{confidence:.1f}%'
+            confidence = f'{100 - confidence:.1f}%'
         else:
             _id = "unknown"
-            confidence = f'{confidence:.1f}%'
+            confidence = f'{100 - confidence:.1f}%'
         
         cv2.putText(img, str(_id), (x+5, y-5), font, 1, (255, 255, 255), 2)
         cv2.putText(img, str(confidence), (x+5, y+h-5), font, 1, (255, 255, 0), 1)  
