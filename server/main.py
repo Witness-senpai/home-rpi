@@ -9,7 +9,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../recognizer'))
 from flask import Flask, render_template, Response
 import cv2
 
-from recognizer_test import VideoStream
 from detector import CASCADE_PATH
 from trainer import MODEL_PATH
 from recognizer import one_frame_recognition
