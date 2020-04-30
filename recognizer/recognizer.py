@@ -1,72 +1,66 @@
-import os 
 import logging
+import time
+import datetime
+import threading
+import sys, os
+import random
 
+from flask import Flask, render_template, Response
 import cv2
-import numpy as np
 
 from detector import CASCADE_PATH
 from trainer import MODEL_PATH
 
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(
-        level='INFO',
-        format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
+FONT = cv2.FONT_HERSHEY_SIMPLEX
 
-logger.info('Start face recognition...')
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read(MODEL_PATH)
 faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
-font = cv2.FONT_HERSHEY_SIMPLEX
+def one_frame_recognition(
+        frame,
+        scaleFactor,
+        minNeighbors, 
+        minWinSize,
+        labels,
+    ):
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-# names related to ids: example ==> Marcelo: id=1,  etc
-names = ['u0', 'u1', 'u2', 'u3'] 
+        faces = faceCascade.detectMultiScale( 
+            gray_frame,
+            scaleFactor = scaleFactor,
+            minNeighbors = minNeighbors,
+            minSize = minWinSize,
+        )
 
-# Initialize and start realtime video capture
-cam = cv2.VideoCapture(0)
-cam.set(3, 2560) # set video widht
-cam.set(4, 1440) # set video height
+        for(x, y, w, h) in faces:
+            cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 0, 255), 2)
+            _id, confidence = recognizer.predict(gray_frame[y: y+h, x: x+w])
+            # Check if confidence is less them 100 ==> "0" is perfect match 
+            if (confidence < 100):
+                _id = labels[_id]
+                confidence = f"{100 - confidence:.1f}%"
+            else:
+                _id = "unknown"
+                confidence = f'{100 - confidence:.1f}%'
+            
+            cv2.putText(frame, str(_id), (x+5, y-5), FONT, 1, (255, 255, 255), 2)
+            cv2.putText(frame, str(confidence), (x+5, y+h-5), FONT, 1, (255, 255, 0), 1)
 
-# Define min window size to be recognized as a face
-minW = 100
-minH = 100
-while True:
-    ret, img = cam.read()
-    img = cv2.flip(img, -1) # Flip vertically
+        timestamp = datetime.datetime.now()
+        cv2.putText(
+            frame,
+            timestamp.strftime("%A %d %B %Y %I:%M:%S%p"),
+            (10, frame.shape[0] - 10),
+            FONT,
+            1,
+            (0, 255, 255),
+            1
+        )
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return frame
 
-    faces = faceCascade.detectMultiScale( 
-        gray,
-        scaleFactor = 1.5,
-        minNeighbors = 5,
-        minSize = (int(minW), int(minH)),
-    )
-
-    for(x, y, w, h) in faces:
-        cv2.rectangle(img, (x,y), (x+w, y+h), (0, 255, 0), 2)
-
-        _id, confidence = recognizer.predict(gray[y: y+h, x: x+w])
-
-        # Check if confidence is less them 100 ==> "0" is perfect match 
-        if (confidence < 100):
-            _id = names[_id]
-            confidence = f'{100 - confidence:.1f}%'
-        else:
-            _id = "unknown"
-            confidence = f'{100 - confidence:.1f}%'
-        
-        cv2.putText(img, str(_id), (x+5, y-5), font, 1, (255, 255, 255), 2)
-        cv2.putText(img, str(confidence), (x+5, y+h-5), font, 1, (255, 255, 0), 1)  
-    
-    cv2.imshow('Face recognition', img) 
-
-    k = cv2.waitKey(10) & 0xff # Press 'ESC' for exiting video
-    if k == 27:
-        break
-
-logger.info('Stop face recognition')
-cam.release()
-cv2.destroyAllWindows()
+if __name__ == '__main__':
+    one_frame_recognition()
