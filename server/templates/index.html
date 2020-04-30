@@ -1,12 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
 
-<html>
-    <head>
-      <title>home-rpi</title>
-      <link rel="stylesheet" href='styles/style.css'/>
-    </head>
-    <body>
-      <h1>Video capture</h1>
-      <h3><img src="{{ url_for('video_feed') }}" width="90%"></h3>
-      <hr>
-    </body>
-  </html>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet"> 
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Raspberry Pi</title>
+
+  <style type="text/css">
+
+body{
+background:#f1f1f1;
+}
+
+header, nav  {
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+nav a {
+  font-family:'Roboto', Helvetica Neue,helvetica,arial,verdana,sans-serif;
+  font-weight:200;
+  font-size: 2.4em;
+  text-decoration: none;
+  background: #333; 
+  border-radius: 5px;
+  color: white;
+  padding: 3px 8px;
+  display: block;
+}
+
+p{
+  font-family:'Roboto', Helvetica Neue,helvetica,arial,verdana,sans-serif;
+  font-weight:200;
+  font-size: 2.8em;
+  line-height: 1.333em; /* 16px/12 =1.33em*/
+  margin-bottom: 1.25em; /* 15px/12 =1.25em*/
+}
+
+h1{
+  font-family:'Roboto', Helvetica Neue,helvetica,arial,verdana,sans-serif;
+  margin:0px auto 0 auto;
+  font-size: 2.8em;
+  text-align:center;
+  font-weight:200;
+  color:#4b4b4b;
+}
+
+#navbar {
+  font-family:'Roboto', Helvetica Neue,helvetica,arial,verdana,sans-serif;
+  font-weight:200;
+  font-size: 2.0em;
+  text-align: center;
+  text-decoration: none;
+  background: #333; 
+  border-radius: 5px;
+  color: white;
+  padding: 3px 8px;
+}
+
+#navbar li { display: inline; }
+
+#navbar a {
+        color: #fff;
+        padding: 3px 8px;
+        text-decoration: none;
+        display: inline;
+        width: 100px;
+}
+
+  </style>
+ </head>
+ <body>
+<h1 align="center">Home secure system on RPi 4</h1>
+<h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
+
+<nav role='navigation'>
+  <a href="">Add new user</a>
+  <a href="">Screenshoot</a>
+  <a href="">Triggers</a>  
+  <a href="">Content storage</a>  
+  <a href="">...</a>
+
+</nav>
+
+<ul id="navbar">
+      <li><a href="/--">[Status]</a></li>
+      <li><a href="/--">[Reboot]</a></li>
+      <li><a href="/--">[Stop]</a></li>
+    </ul>
+
+</body>
+</html>
