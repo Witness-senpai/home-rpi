@@ -70,6 +70,3 @@ def one_frame_recognition(
         )
 
         return frame
-
-if __name__ == '__main__':
-    one_frame_recognition()
