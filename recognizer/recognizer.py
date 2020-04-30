@@ -14,6 +14,10 @@ from trainer import MODEL_PATH
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+        level='INFO',
+        format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read(MODEL_PATH)
@@ -25,8 +29,13 @@ def one_frame_recognition(
         minNeighbors, 
         minWinSize,
         labels,
-    ):
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    ):  
+        try:
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        except Exception as ex:
+            # Exception if other thread change some vars
+            logger.warning(ex)
+            exit()
 
         faces = faceCascade.detectMultiScale( 
             gray_frame,
