@@ -28,6 +28,9 @@ app = Flask(__name__)
 # Flag to stop iunfinity Recognition thread
 sflag_recognition = False
 # Frame to output after recognition
+flip = -1
+# If True -- recognition is enable
+do_reconize = True
 outFrame = 0
 ready = True
 widht = 1024
@@ -48,14 +51,18 @@ def video_feed():
 
 @app.route('/process_settings', methods=['POST'])
 def process_settings():
-    global cam, change_resolution, sflag_recognition
+    global cam, sflag_recognition, flip, do_reconize
     isdetect = request.form.getlist('isdetect')
     logger.info(isdetect)
     resolution = request.form.get('resolution')
     logger.info(resolution)
     orientation = request.form.get('orientation')
     logger.info(orientation)
+    recognition_status = request.form.get('recognition_status')
+    logger.info(recognition_status)
 
+    if isdetect:
+        pass
     if resolution:
         wh = resolution.split('x')
         sflag_recognition = True
@@ -64,6 +71,13 @@ def process_settings():
         logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
         sflag_recognition = False
         start_rec_thread()
+    if orientation:
+        flip = int(orientation)
+        logger.info(f'Change orientation to {flip}')
+    if recognition_status:
+        do_reconize = True if recognition_status == "True" else False
+        logger.info(f'Change recognoition status: {do_reconize}')
+    
     return render_template('index.html')
 
 def generate():
@@ -78,7 +92,7 @@ def generate():
             bytearray(encodedImage) + b'\r\n')
 
 def recognition():
-    global outFrame, cam, ready, sflag_recognition
+    global outFrame, cam, ready, sflag_recognition, flip, do_reconize
     labels = ['Person X']
     minWinSize = (100, 100)
     flip = -1
@@ -91,13 +105,16 @@ def recognition():
         try:
             ret, frame = cam.read()
             frame = cv2.flip(frame, flip)
-            outFrame = one_frame_recognition(
-                frame,
-                scaleFactor,
-                minNeighbors,
-                minWinSize,
-                labels,
-            )
+            if do_reconize:
+                outFrame = one_frame_recognition(
+                    frame,
+                    scaleFactor,
+                    minNeighbors,
+                    minWinSize,
+                    labels,
+                )
+            else:
+                outFrame = frame
         except Exception as ex:
             logger.warning(ex)
             continue
