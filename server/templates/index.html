@@ -14,34 +14,35 @@
 <h1 align="center">Home secure system on RPi 4</h1>
 <h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
 
-<form action="" method="POST">
+<form action="/" method="POST">
   <label></label>
   <input type="submit" value="Добавить пользователя">
 </form>
 
-<form action="" method="POST">
+<form action="/process_settings" method="POST">
   <label>Действия при обнаружении постороннего: </label><br>
-  <label><input type="checkbox" name="option2" value="a2">Скриншот<br></label>
-  <label><input type="checkbox" name="option2" value="a2">Видео<br></label>
-  <label><input type="checkbox" name="option2" value="a2">Сообщение в telegram <br></label>
+  <label><input type="checkbox" name="isdetect" value="1">Скриншот<br></label>
+  <label><input type="checkbox" name="isdetect" value="2">Видео<br></label>
+  <label><input type="checkbox" name="isdetect" value="3">Сообщение в telegram <br></label>
+  <input type="submit" value="OK">
 </form>
 
-<form action="" method="POST">
+<form action="/process_settings" method="POST">
   <label>Разрешение видео: </label>
-  <select>
+  <select name="resolution">
     <option disabled>Resolution</option>
-    <option value="640x360">640x360</option>
-    <option value="854x480">854x480</option>
-    <option value="1280x720">1280x720</option>
-    <option value="1920x1080">1920x1080</option>
-    <option value="2560x1440">2560x1440</option>
+    <option  value="640x480">640x480</option>
+    <option  value="854x480">854x480</option>
+    <option  value="1024x720">1024x720</option>
+    <option  value="1920x1080">1920x1080</option>
+    <option  value="2560x1440">2560x1440</option>
    </select>
   <input type="submit" value="OK">
 </form>
 
-<form action="" method="POST">
+<form action="/process_settings" method="POST">
   <label>Ориентация видео:</label>
-  <select>
+  <select  name="orientation">
     <option disabled>Orientation</option>
     <option value="-1">-1</option>
     <option value="0">0</option>
@@ -50,7 +51,7 @@
   <input type="submit" value="OK">
 </form>
 
-<form action="" method="POST">
+<form action="/" method="POST">
   <label>Режим распознавания: </label>
   <label><input type="radio" name="regognition_status" value="yes" checked> Да</label>
   <label><input type="radio" name="regognition_status" value="no"> Нет</label>
