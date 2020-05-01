@@ -21,9 +21,9 @@
 
 <form action="/process_settings" method="POST">
   <label>Действия при обнаружении постороннего: </label><br>
-  <label><input type="checkbox" name="isdetect" value="1" {% if '1' in isdetect %}checked{% endif %}>Скриншот<br></label>
-  <label><input type="checkbox" name="isdetect" value="2" {% if '2' in isdetect %}checked{% endif %}>Видео<br></label>
-  <label><input type="checkbox" name="isdetect" value="3" {% if '3' in isdetect %}checked{% endif %}>Сообщение в telegram <br></label>
+  <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
+  <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
+  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram <br></label>
   <input type="submit" value="OK">
 </form>
 
@@ -49,7 +49,7 @@
     <option disabled>Orientation</option>
     <option value="-1" {% if orientation == '-1' %}selected{% endif %}>-1</option>
     <option value="0" {% if orientation == '0' %}selected{% endif %}>0</option>
-    <option value="1" {% if orientation == '2' %}selected{% endif %}>1</option>
+    <option value="1" {% if orientation == '1' %}selected{% endif %}>1</option>
    </select>
   <input type="submit" value="OK">
 </form>

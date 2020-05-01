@@ -39,8 +39,8 @@ ready = True
 widht = 1024
 height = 720
 cam = cv2.VideoCapture(0)
-cam.set(3, widht) # set Width
-cam.set(4, height) # set Height
+cam.set(3, int(settings['resolution'].split('x')[0])) # set Width
+cam.set(4, int(settings['resolution'].split('x')[1])) # set Height
 
 @app.route('/')
 def index():
@@ -54,9 +54,9 @@ def video_feed():
 
 @app.route('/process_settings', methods=['POST'])
 def process_settings():
-    global cam, sflag_recognition, flip, do_reconize
-    isdetect = request.form.getlist('isdetect')
-    logger.info(isdetect)
+    global cam, sflag_recognition, settings
+    triggers = request.form.getlist('triggers')
+    logger.info(triggers)
     resolution = request.form.get('resolution')
     logger.info(resolution)
     orientation = request.form.get('orientation')
@@ -64,24 +64,29 @@ def process_settings():
     recognition_status = request.form.get('recognition_status')
     logger.info(recognition_status)
 
-    if isdetect:
-        pass
+    if triggers:
+        settings['triggers'] = []
+        for el in triggers:
+            settings['triggers'].append(el)
     if resolution:
+        sflag_recognition = True # Stop flag for thread with recognition
+        settings['resolution'] = resolution
         wh = resolution.split('x')
-        sflag_recognition = True
         cam.set(3, int(wh[0])) # set Width
         cam.set(4, int(wh[1])) # set Height
         logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
-        sflag_recognition = False
-        start_rec_thread()
+        sflag_recognition = False 
+        start_rec_thread() # Start thread with recognition
     if orientation:
-        flip = int(orientation)
-        logger.info(f'Change orientation to {flip}')
+        settings['orientation'] = orientation
+        logger.info(f'Change orientation to {orientation}')
     if recognition_status:
-        do_reconize = True if recognition_status == "True" else False
-        logger.info(f'Change recognoition status: {do_reconize}')
+        settings['recognition_status'] = recognition_status
+        logger.info(f'Change recognoition status: {recognition_status}')
     
-    return render_template('index.html')
+    tools.save_settings(settings)
+    logging.info(f'All settings: {settings}')
+    return render_template('index.html', **settings)
 
 def generate():
     global outFrame, ready
@@ -95,11 +100,10 @@ def generate():
             bytearray(encodedImage) + b'\r\n')
 
 def recognition():
-    global outFrame, cam, ready, sflag_recognition, flip, do_reconize
+    global outFrame, cam, ready, sflag_recognition, settings
     labels = ['Person X']
     minWinSize = (100, 100)
-    flip = -1
-    scaleFactor = 4
+    scaleFactor = 1.5
     minNeighbors = 5
     while True:
         if sflag_recognition:
@@ -107,8 +111,8 @@ def recognition():
         ready = False
         try:
             ret, frame = cam.read()
-            frame = cv2.flip(frame, flip)
-            if do_reconize:
+            frame = cv2.flip(frame, int(settings['orientation']))
+            if settings['recognition_status'] == "True":
                 outFrame = one_frame_recognition(
                     frame,
                     scaleFactor,
