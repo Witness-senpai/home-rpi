@@ -1,4 +1,6 @@
-database/*
+database/_temp
+database/cam_content
+database/model
 recognizer/__pycache__
-
 server/__pycache__/
+tools/__pycache__/

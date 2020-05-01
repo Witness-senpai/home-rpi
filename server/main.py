@@ -5,6 +5,7 @@ import threading
 import sys, os
 import random
 sys.path.append(os.path.join(os.path.dirname(__file__), '../recognizer'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../tools'))
 
 from flask import Flask, render_template, Response, request
 import cv2
@@ -12,7 +13,9 @@ import cv2
 from detector import CASCADE_PATH
 from trainer import MODEL_PATH
 from recognizer import one_frame_recognition
+import tools
 
+settings = tools.load_settings()
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 IP = 'localhost'
@@ -41,7 +44,7 @@ cam.set(4, height) # set Height
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', **settings)
 
 @app.route('/video_feed')
 def video_feed():
@@ -85,7 +88,7 @@ def generate():
     while True:
         while not ready:
             pass
-            time.sleep(0.0001)
+            #time.sleep(0.0001)
         flag, encodedImage = cv2.imencode(".jpg", outFrame)
 
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
@@ -96,7 +99,7 @@ def recognition():
     labels = ['Person X']
     minWinSize = (100, 100)
     flip = -1
-    scaleFactor = 1.5
+    scaleFactor = 4
     minNeighbors = 5
     while True:
         if sflag_recognition:

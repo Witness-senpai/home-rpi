@@ -21,9 +21,9 @@
 
 <form action="/process_settings" method="POST">
   <label>Действия при обнаружении постороннего: </label><br>
-  <label><input type="checkbox" name="isdetect" value="1">Скриншот<br></label>
-  <label><input type="checkbox" name="isdetect" value="2">Видео<br></label>
-  <label><input type="checkbox" name="isdetect" value="3">Сообщение в telegram <br></label>
+  <label><input type="checkbox" name="isdetect" value="1" {% if '1' in isdetect %}checked{% endif %}>Скриншот<br></label>
+  <label><input type="checkbox" name="isdetect" value="2" {% if '2' in isdetect %}checked{% endif %}>Видео<br></label>
+  <label><input type="checkbox" name="isdetect" value="3" {% if '3' in isdetect %}checked{% endif %}>Сообщение в telegram <br></label>
   <input type="submit" value="OK">
 </form>
 
@@ -31,11 +31,14 @@
   <label>Разрешение видео: </label>
   <select name="resolution">
     <option disabled>Resolution</option>
-    <option  value="640x480">640x480</option>
-    <option  value="854x480">854x480</option>
-    <option  value="1024x720">1024x720</option>
-    <option  value="1920x1080">1920x1080</option>
-    <option  value="2560x1440">2560x1440</option>
+    <option  value="480x360" {% if resolution == '480x360'%}selected{% endif %}>480x360</option>
+    <option  value="640x480" {% if resolution == '640x480'%}selected{% endif %}>640x480</option>
+    <option  value="800x600" {% if resolution == '800x600'%}selected{% endif %}>800x600</option>
+    <option  value="1024x768" {% if resolution == '1024x768'%}selected{% endif %}>1024x768</option>
+    <option  value="1280x960" {% if resolution == '1280x960'%}selected{% endif %}>1280x960</option>
+    <option  value="1440x1080" {% if resolution == '1440x1080'%}selected{% endif %}>1440x1080</option>
+    <option  value="1600x1200" {% if resolution == '1600x1200'%}selected{% endif %}>1600x1200</option>
+    <option  value="1920x1440" {% if resolution == '1920x1440'%}selected{% endif %}>1920x1440</option>
    </select>
   <input type="submit" value="OK">
 </form>
@@ -44,17 +47,17 @@
   <label>Ориентация видео:</label>
   <select  name="orientation">
     <option disabled>Orientation</option>
-    <option value="-1">-1</option>
-    <option value="0">0</option>
-    <option value="1">1</option>
+    <option value="-1" {% if orientation == '-1' %}selected{% endif %}>-1</option>
+    <option value="0" {% if orientation == '0' %}selected{% endif %}>0</option>
+    <option value="1" {% if orientation == '2' %}selected{% endif %}>1</option>
    </select>
   <input type="submit" value="OK">
 </form>
 
 <form action="/process_settings" method="POST">
   <label>Режим распознавания: </label>
-  <label><input type="radio" name="recognition_status" value="True" checked> Да</label>
-  <label><input type="radio" name="recognition_status" value="False"> Нет</label>
+  <label><input type="radio" name="recognition_status" value="True" {% if recognition_status == 'True' %}checked{% endif %}>Да</label>
+  <label><input type="radio" name="recognition_status" value="False" {% if recognition_status == 'False' %}checked{% endif %}>Нет</label>
   <input type="submit" value="OK">
 </form>
 
