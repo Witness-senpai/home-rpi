@@ -30,6 +30,7 @@ def to_default():
     else:
         logger.info('Copy default setting to current settings.')
 
+<<<<<<< HEAD
 data = {
     'telegram_token': 'U4JF7SMF8GDJ',
     'resolution': '1280x960',
@@ -40,3 +41,5 @@ data = {
 to_default()
 save_settings(data)
 
+=======
+>>>>>>> master
