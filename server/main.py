@@ -16,6 +16,7 @@ from trainer import MODEL_PATH
 from recognizer import one_frame_recognition
 import tools
 from tbot.start import bot_start
+from tbot.tbot import send_message
 
 settings = tools.load_settings()
 
@@ -113,11 +114,13 @@ def generate():
 
 def recognition():
     global outFrame, cam, ready, sflag_recognition, settings
-    labels = ['Person X']
+    names = ['Person X']
+    detected_names = []
     minWinSize = (100, 100)
     scaleFactor = 1.5
     minNeighbors = 5
     n_frame = 0
+    trigger = True
     while True:
         n_frame += 1
         if sflag_recognition:
@@ -127,18 +130,21 @@ def recognition():
             ret, frame = cam.read()
             frame = cv2.flip(frame, int(settings['orientation']))
             if settings['recognition_status'] == "True":
-                outFrame = one_frame_recognition(
+                outFrame, detected_names = one_frame_recognition(
                     frame,
                     scaleFactor,
                     minNeighbors,
                     minWinSize,
-                    labels,
+                    names,
                 )
             else:
                 outFrame = frame
         except Exception as ex:
             logger.warning(ex)
             continue
+        if 'Person X' in detected_names and trigger:
+            trigger = False
+            send_message('unknown person is detected!')
         ready = True
         time.sleep(0.0001)
 

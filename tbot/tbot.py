@@ -19,7 +19,7 @@ user_id = 0
 def send_message(text):
     bot.send_message(
         user_id,
-        "ТЕСТ ТЕСТОВИЧ"
+        text
 )
 
 
