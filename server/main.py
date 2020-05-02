@@ -72,6 +72,10 @@ def process_settings():
 
     if telegram_token:
         settings['telegram_token'] = telegram_token
+        try:
+            start_tbot_thread()
+        except Exception as ex:
+            logger.error(ex)
     if triggers:
         settings['triggers'] = []
         for el in triggers:
@@ -144,11 +148,8 @@ def start_rec_thread():
     t_recognition.daemon = True
     t_recognition.start()
 
-def start_tbot_thread(token):
-    t_tbot = threading.Thread(
-        target=bot_start,
-        args=(token,),
-    )
+def start_tbot_thread():
+    t_tbot = threading.Thread(target=bot_start)
     t_tbot.setName('Telegram bot')
     t_tbot.daemon = True
     t_tbot.start()
@@ -157,8 +158,7 @@ def main():
     start_rec_thread()
 
     if settings['telegram_token']:
-        logger.info(settings['telegram_token'])
-        start_tbot_thread(settings['telegram_token'])
+        start_tbot_thread()
 
     app.run(host=IP, port=PORT, debug=True,
         threaded=True, use_reloader=False)

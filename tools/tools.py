@@ -2,6 +2,9 @@ import json
 import logging
 from shutil import copyfile
 
+from numpy import array
+from PIL.Image import open as pil_open
+
 DEFAULT_SETTINGS_PATH = 'database/settings/default_settings.json'
 SETTINGS_PATH = 'database/settings/settings.json'
 
@@ -30,6 +33,12 @@ def to_default():
     else:
         logger.info('Copy default setting to current settings.')
 
+def get_teletoken():
+    return load_settings()['telegram_token']
+
+#def save_img_in_encode():
+
+
 data = {
     'telegram_token': 'U4JF7SMF8GDJ',
     'resolution': '1280x960',
@@ -37,5 +46,5 @@ data = {
     'recognition_status': 'True',
     'isdetect': ['2', '3']
 }
-to_default()
-save_settings(data)
+#to_default()
+#save_settings(data)
