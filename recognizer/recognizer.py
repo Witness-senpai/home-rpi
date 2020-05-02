@@ -30,6 +30,7 @@ def one_frame_recognition(
         minWinSize,
         labels,
     ):  
+        detected_names = []
         try:
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         except Exception as ex:
@@ -54,7 +55,7 @@ def one_frame_recognition(
             else:
                 _id = "unknown"
                 confidence = f'{100 - confidence:.1f}%'
-            
+            detected_names.append(_id)
             cv2.putText(frame, str(_id), (x+5, y-5), FONT, 1, (255, 255, 255), 2)
             cv2.putText(frame, str(confidence), (x+5, y+h-5), FONT, 1, (255, 255, 0), 1)
 
@@ -69,4 +70,4 @@ def one_frame_recognition(
             1
         )
 
-        return frame
+        return frame, detected_names

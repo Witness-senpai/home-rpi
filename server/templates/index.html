@@ -14,7 +14,12 @@
 <h1 align="center">Home secure system on RPi 4</h1>
 <h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
 
-<form action="/" method="POST">
+<form action="/process_settings" method="POST">
+  <label></label>
+  <input type="submit" name="screenshot" value="screenshot">
+</form>
+
+<form action="/process_settings" method="POST">
   <label></label>
   <input type="submit" value="Добавить пользователя">
 </form>
@@ -23,7 +28,8 @@
   <label>Действия при обнаружении постороннего: </label><br>
   <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
   <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
-  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram <br></label>
+  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram, token=</label>
+  <label><input type="text" name="telegram_token" value="{% if telegram_token %}{{ telegram_token }}{% else %}Bot token{% endif %}"><br></label>
   <input type="submit" value="OK">
 </form>
 
