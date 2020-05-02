@@ -36,12 +36,24 @@ def to_default():
 def get_teletoken():
     return load_settings()['telegram_token']
 
-#def save_img_in_encode():
+def change_settings(key, value):
+    """
+    Change settings dict by key and value
+    """
+    settings = load_settings()
+    settings[key] = value
+    save_settings(settings)
 
+def add_user_to_settings(user):
+    settings = load_settings()
+    if user not in settings['telegram_users']:
+        settings['telegram_users'].append(user)
+    save_settings(settings)
 
 data = {
-    'telegram_token': 'U4JF7SMF8GDJ',
-    'resolution': '1280x960',
+    'telegram_users': [],
+    'telegram_token': '1116323750:AAHSnkteZMSF_OoTvMLp3c6PIO2MGCw5zcU',
+    'resolution': '640x480',
     'orientation': '0',
     'recognition_status': 'True',
     'isdetect': ['2', '3']
