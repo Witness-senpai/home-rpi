@@ -1,20 +1,19 @@
-import telebot
 import logging
+from time import sleep
+
+import telebot
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
         level='INFO',
         format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
 
-TOKEN = '123'
-
-def main():
-    bot = telebot.TeleBot(TOKEN)
+def main(token):
+    bot = telebot.TeleBot(token)
 
     @bot.message_handler(commands=['start'])
+    def entry_point(message):
         pass
      
-    try:
-        bot.polling(none_stop=True, timeout=60)
-    except Exception as ex:
-        logging.error(ex)  
+    bot.polling(none_stop=True, timeout=60)
