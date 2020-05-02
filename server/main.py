@@ -120,7 +120,7 @@ def recognition():
     scaleFactor = 1.5
     minNeighbors = 5
     n_frame = 0
-    trigger = True
+    temp_trigger = True # Temporary var for testing
     while True:
         n_frame += 1
         if sflag_recognition:
@@ -142,9 +142,9 @@ def recognition():
         except Exception as ex:
             logger.warning(ex)
             continue
-        if 'Person X' in detected_names and trigger:
-            trigger = False
-            send_message('unknown person is detected!')
+        if 'Person X' in detected_names and temp_trigger and '3' in settings['triggers']:
+            temp_trigger = False
+            send_message('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
 

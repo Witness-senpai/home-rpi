@@ -22,13 +22,11 @@ telebot.apihelper.proxy = {'https': '200.195.162.242:3128'}
 user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
 user_markup.row("/add", "/status")
 
-def send_message(text):
+def send_message(text, photo):
     users = load_settings()['telegram_users']
-    for user in users:
-        bot.send_message(
-            user,
-            text
-        )
+    for user_id in users:
+        bot.send_message(user_id, text )
+        bot.send_photo( user_id, photo)
 
 @bot.message_handler(commands=['start'])
 def entry_point(message):
