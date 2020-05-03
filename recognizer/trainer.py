@@ -7,11 +7,11 @@ from PIL import Image
 
 from detector import CASCADE_PATH, face_demo
 
-
 # Path for face image database
 MODEL_PATH = 'database/model/model.yml'
 TEMP_IMG_PATH = 'database/_temp'
 SAMPLES_FOR_TRAINING = 50
+FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -53,45 +53,42 @@ def get_imgs_and_labels(path, detector):
 
     return face_samples, ids
 
-# Fucntion to save images of face from camera to temp folder 
-def save_imgs_from_cam(samples=SAMPLES_FOR_TRAINING):
-    cam = cv2.VideoCapture(0)
-    cam.set(3, 2560) # set video width
-    cam.set(4, 1440) # set video height
+recognizer = cv2.face.LBPHFaceRecognizer_create()
+recognizer.read(MODEL_PATH)
+faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
-    face_detector = cv2.CascadeClassifier(CASCADE_PATH)
+def one_frame_detect_face(
+        frame,
+        scaleFactor,
+        minNeighbors, 
+        minWinSize,
+        username,
+        number_of_frame,
+        frames
+    ):  
+        isdetect = False
+        try:
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        except Exception as ex:
+            logger.warning(ex)
+            exit()
 
-    users_count = int(input('\nEnter count of users: '))
+        faces = faceCascade.detectMultiScale( 
+            gray_frame,
+            scaleFactor = scaleFactor,
+            minNeighbors = minNeighbors,
+            minSize = minWinSize,
+        )
 
-    for face_id in range(users_count):
-        logger.info('Initializing face capture. Look the camera and wait...')
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+            
+            file_name = f'{TEMP_IMG_PATH}/{username}.{number_of_frame}.jpg'
+            cv2.imwrite(file_name, gray_frame[y: y+h, x: x+w])
+            logger.info(f'Save img: {file_name}')
+            isdetect = True
 
-        count = 0
-        while(True):
-            ret, img = cam.read()
-            img = cv2.flip(img, -1) # flip video image vertically
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = face_detector.detectMultiScale(gray, 1.3, 5)
+        progress = f'{number_of_frame}/{frames}'
+        cv2.putText(frame, progress, (10, frame.shape[0] - 10), FONT, 1, (0, 255, 0), 2)
 
-            for (x,y,w,h) in faces:
-                cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)     
-                count += 1
-
-                # Save the captured image into the datasets folder
-                file_name = f'{TEMP_IMG_PATH}/user.{face_id}.{count}.jpg'
-                cv2.imwrite(file_name, gray[y: y+h, x: x+w])
-                cv2.imshow('image', img)
-                logger.info(f'Saving {file_name}')
-
-            k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
-            if k == 27:
-                break
-            elif count >= samples:
-                break
-
-    logger.info(f'Saved {samples*users_count} samples for {users_count} users.')
-    cam.release()
-    cv2.destroyAllWindows()
-
-if __name__ == '__main__':
-    main()
+        return frame, isdetect

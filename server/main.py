@@ -12,7 +12,7 @@ from flask import Flask, render_template, Response, request, redirect
 import cv2
 
 from detector import CASCADE_PATH
-from trainer import MODEL_PATH
+from trainer import MODEL_PATH, one_frame_detect_face
 from recognizer import one_frame_recognition
 import tools
 from tbot.start import bot_start
@@ -45,16 +45,20 @@ cam = cv2.VideoCapture(0)
 cam.set(3, int(settings['resolution'].split('x')[0])) # set Width
 cam.set(4, int(settings['resolution'].split('x')[1])) # set Height
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', **settings)
 
-@app.route('/train')
+@app.route('/train', methods=['GET', 'POST'])
 def train():
     train_name = request.form.get('train_name')
+    go_train = False
     train_frame_count = request.form.get('train_frame_count')
+    logger.info(request.form)
     if train_name and train_frame_count:
+        start_photoset_thread(int(train_frame_count), train_name)
         go_train = True
+
     return render_template(
         'train.html',
         photo_is_ready=False,
@@ -132,10 +136,10 @@ def recognition():
     minWinSize = (100, 100)
     scaleFactor = 1.5
     minNeighbors = 5
-    n_frame = 0
-    temp_trigger = True # Temporary var for testing
+    #n_frame = 0
+    temp_trigger = False # Temporary var for testing
     while True:
-        n_frame += 1
+        #n_frame += 1
         if sflag_recognition:
             break
         ready = False
@@ -160,6 +164,43 @@ def recognition():
             send_alert('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
+    logger.info('Stop recognition...')
+
+def process_photoset(train_frame_count, username):
+    """
+    Functioun like a recognition(), but with saving dataset
+    of faces for training. Output frame web interface output only with faces
+    """
+    logger.info('Start photoset')
+    global outFrame, cam, sflag_recognition, settings
+    sflag_recognition = True # Stop recognition thread
+    minWinSize = (100, 100)
+    scaleFactor = 1.5
+    minNeighbors = 5
+    n_frame = 0
+    while True:
+        try:
+            ret, frame = cam.read()
+            frame = cv2.flip(frame, int(settings['orientation']))
+            outFrame, isdetect = one_frame_detect_face(
+                frame,
+                scaleFactor,
+                minNeighbors,
+                minWinSize,
+                username,
+                n_frame,
+                train_frame_count,
+            )
+            if isdetect:
+                n_frame += 1
+        except Exception as ex:
+            logger.warning(ex)
+            continue
+        
+        if n_frame >= train_frame_count:
+            break
+    
+    sflag_recognition = False
 
 def start_rec_thread():
     t_recognition = threading.Thread(target=recognition)
@@ -172,6 +213,14 @@ def start_tbot_thread():
     t_tbot.setName('Telegram bot')
     t_tbot.daemon = True
     t_tbot.start()
+
+def start_photoset_thread(train_frame_count, username):
+    t_photoset = threading.Thread(
+        target=process_photoset,
+        args=(train_frame_count, username,))
+    t_photoset.setName('Photoset')
+    t_photoset.daemon = True
+    t_photoset.start()
 
 def send_alert(text, bynary_photo):
     """
