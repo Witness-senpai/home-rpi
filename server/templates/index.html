@@ -28,7 +28,7 @@
   <label>Действия при обнаружении постороннего: </label><br>
   <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
   <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
-  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram, token=</label>
+  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram {% if telebot_username %}@{{ telebot_username }}{% endif %}, token=</label>
   <label><input type="text" name="telegram_token" value="{% if telegram_token %}{{ telegram_token }}{% else %}Bot token{% endif %}"><br></label>
   <input type="submit" value="OK">
 </form>

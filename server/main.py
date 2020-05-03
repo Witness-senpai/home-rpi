@@ -144,7 +144,7 @@ def recognition():
             continue
         if 'Person X' in detected_names and temp_trigger and '3' in settings['triggers']:
             temp_trigger = False
-            send_message('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
+            send_alert('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
 
@@ -159,6 +159,18 @@ def start_tbot_thread():
     t_tbot.setName('Telegram bot')
     t_tbot.daemon = True
     t_tbot.start()
+
+def send_alert(text, bynary_photo):
+    """
+    In another thread send message after detection of unknown person
+    """
+    t_tbot_message = threading.Thread(
+        target=send_message,
+        args=(text, bynary_photo,)
+    )
+    t_tbot_message.setName('Telegram bot: send message')
+    t_tbot_message.daemon = True
+    t_tbot_message.start()
 
 def main():
     start_rec_thread()

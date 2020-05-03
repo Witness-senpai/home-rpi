@@ -49,14 +49,3 @@ def add_user_to_settings(user):
     if user not in settings['telegram_users']:
         settings['telegram_users'].append(user)
     save_settings(settings)
-
-data = {
-    'telegram_users': [],
-    'telegram_token': '1116323750:AAHSnkteZMSF_OoTvMLp3c6PIO2MGCw5zcU',
-    'resolution': '640x480',
-    'orientation': '0',
-    'recognition_status': 'True',
-    'isdetect': ['2', '3']
-}
-#to_default()
-#save_settings(data)
