@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../recognizer'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../tools'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, redirect
 import cv2
 
 from detector import CASCADE_PATH
@@ -48,6 +48,19 @@ cam.set(4, int(settings['resolution'].split('x')[1])) # set Height
 @app.route('/')
 def index():
     return render_template('index.html', **settings)
+
+@app.route('/train')
+def train():
+    train_name = request.form.get('train_name')
+    train_frame_count = request.form.get('train_frame_count')
+    if train_name and train_frame_count:
+        go_train = True
+    return render_template(
+        'train.html',
+        photo_is_ready=False,
+        train_name='Test',
+        go_train=go_train
+    )
 
 @app.route('/video_feed')
 def video_feed():

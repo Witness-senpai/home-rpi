@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ <link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css">
+<meta name="theme-color" content="#ffffff">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet"> 
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>RPi system</title>
+ </head>
+ <body>
+<h1 align="center">Home secure system on RPi 4</h1>
+<h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
+
+<form action="/train" method="POST">
+  <label>Параметры обучения: </label><br>
+  <label>Имя: <input type="text" name="train_name"><br></label>
+  <label>Фотографий для тренировки: <input type="number" name="train_frame_count" min="10" max="100"><br></label>
+  <input type="submit" value="Начать процесс получения фотографий">
+</form>
+
+{% if photo_is_ready %}
+<form action="/train" method="POST">
+  <input type="submit" name= "go_train" value="Обучить модель для {{ train_name }}">
+</form>
+{% endif %}
+
+<ul id="navbar">
+      <li><a href="/--">[Status]</a></li>
+      <li><a href="/--">[Storage]</a></li>
+      <li><a href="/--">[Reboot]</a></li>
+      <li><a href="/--">[Stop]</a></li>
+</ul>
+
+</body>
+</html>

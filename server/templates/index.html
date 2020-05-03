@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#ffffff">
 
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet"> 
-
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>RPi system</title>
  </head>
@@ -14,14 +13,16 @@
 <h1 align="center">Home secure system on RPi 4</h1>
 <h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
 
-<form action="/process_settings" method="POST">
-  <label></label>
-  <input type="submit" name="screenshot" value="screenshot">
+<form action="/train" method="POST">
+  <button>
+    <a href="{{ url_for('train') }}">Добавить пользователя</a>
+  </button>
+</label>
 </form>
 
 <form action="/process_settings" method="POST">
   <label></label>
-  <input type="submit" value="Добавить пользователя">
+  <input type="submit" name="screenshot" value="screenshot">
 </form>
 
 <form action="/process_settings" method="POST">
