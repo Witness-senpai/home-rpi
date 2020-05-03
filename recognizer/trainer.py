@@ -1,5 +1,6 @@
 import os
 import logging
+import threading
 
 import cv2
 import numpy as np
@@ -16,7 +17,7 @@ FONT = cv2.FONT_HERSHEY_SIMPLEX
 logger = logging.getLogger(__name__)
 logging.basicConfig(
         level='INFO',
-        format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
+        format='%(asctime)s %(levelname)s: %(module)s: %(funcName)s() %(lineno)d: %(message)s')
 
 def main():
     face_demo()
@@ -84,11 +85,19 @@ def one_frame_detect_face(
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
             
             file_name = f'{TEMP_IMG_PATH}/{username}.{number_of_frame}.jpg'
-            cv2.imwrite(file_name, gray_frame[y: y+h, x: x+w])
-            logger.info(f'Save img: {file_name}')
+            # Saving img in other thread because it is slow operating
+            t = threading.Thread(
+                target=save_img,
+                args=(file_name, gray_frame[y: y+h, x: x+w])
+            )
+            t.start()
             isdetect = True
 
         progress = f'{number_of_frame}/{frames}'
         cv2.putText(frame, progress, (10, frame.shape[0] - 10), FONT, 1, (0, 255, 0), 2)
 
         return frame, isdetect
+
+def save_img(file_name, img):
+    cv2.imwrite(file_name, img)
+    logger.info(f'Save img: {file_name}')
