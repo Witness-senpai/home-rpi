@@ -21,11 +21,16 @@ logging.basicConfig(
         level='INFO',
         format='%(asctime)s %(levelname)s: %(module)s: %(funcName)s() %(lineno)d: %(message)s')
 
-def train_model():
+def train_model(user_id):
+    """
+    Func for training of model
+    param: user_id = index in rec_users list
+        If len==0 then index 0 will be use for first user in list
+    """
     detector = cv2.CascadeClassifier(CASCADE_PATH)
 
     logger.info('Start training faces...')
-    faces, ids = get_imgs_and_labels(TEMP_IMG_PATH, detector)
+    faces, ids = get_imgs_and_labels(TEMP_IMG_PATH, detector, user_id)
     recognizer.train(faces, np.array(ids))
 
     logger.info(f'Training is done! Saving model to {MODEL_PATH}')
@@ -34,21 +39,19 @@ def train_model():
     logger.info(f'Trained faces: {len(np.unique(ids))}')
 
 # Function to get the images and label data from temp folder
-def get_imgs_and_labels(path, detector):
+def get_imgs_and_labels(path, detector, user_id):
     image_paths = [os.path.join(path, f) for f in os.listdir(path) if f != '.gitkeeper']     
     face_samples=[]
-    ids = []
+    ids = [user_id] * len(image_paths)
 
     for image_path in image_paths:
         img_PIL = Image.open(image_path).convert('L') # convert it to grayscale
         img_numpy = np.array(img_PIL,'uint8')
 
-        _id = int(os.path.split(image_path)[-1].split(".")[1])
         faces = detector.detectMultiScale(img_numpy)
 
         for (x, y, w, h) in faces:
             face_samples.append(img_numpy[y: y+h, x: x+w])
-            ids.append(_id)
 
     return face_samples, ids
 

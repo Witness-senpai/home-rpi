@@ -72,7 +72,7 @@ def video_feed():
     return Response(generate(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/process_settings', methods=['POST'])
+@app.route('/process_settings', methods=['GET', 'POST'])
 def process_settings():
     global cam, sflag_recognition, settings
     triggers = request.form.getlist('triggers')
@@ -151,7 +151,7 @@ def recognition():
                     scaleFactor,
                     minNeighbors,
                     minWinSize,
-                    settings['rec_names'],
+                    settings['rec_users'],
                 )
             else:
                 outFrame = frame
@@ -203,7 +203,7 @@ def process_photoset_and_train(train_frame_count, username):
             break
 
     # Train model after getting photos
-    train_model()
+    train_model(user_id=len(settings['rec_users']))
     if username in settings['rec_users']:
         del settings['rec_users'][username]
     settings['rec_users'].append(username)
