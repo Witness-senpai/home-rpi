@@ -53,7 +53,8 @@ def one_frame_recognition(
             _id, confidence = recognizer.predict(gray_frame[y: y+h, x: x+w])
             # Check if confidence is less them 100 ==> "0" is perfect match 
             if (confidence < 100):
-                _id = labels[_id]
+                if labels:
+                    _id = labels[_id]
                 confidence = f"{100 - confidence:.1f}%"
             else:
                 _id = "unknown"

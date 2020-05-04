@@ -131,7 +131,6 @@ def generate():
 
 def recognition():
     global outFrame, cam, ready, sflag_recognition, settings
-    names = ['Person X']
     detected_names = []
     minWinSize = (100, 100)
     scaleFactor = 1.5
@@ -152,24 +151,24 @@ def recognition():
                     scaleFactor,
                     minNeighbors,
                     minWinSize,
-                    names,
+                    settings['rec_names'],
                 )
             else:
                 outFrame = frame
         except Exception as ex:
             logger.warning(ex)
             continue
-        if 'Person X' in detected_names and temp_trigger and '3' in settings['triggers']:
+        if 'unknown' in detected_names and temp_trigger and '3' in settings['triggers']:
             temp_trigger = False
             send_alert('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
     logger.info('Stop recognition...')
 
-def process_photoset(train_frame_count, username):
+def process_photoset_and_train(train_frame_count, username):
     """
     Functioun like a recognition(), but with saving dataset
-    of faces for training. Output frame web interface output only with faces
+    of faces and training.
     """
     logger.info('Start photoset')
     global outFrame, cam, sflag_recognition, settings, ready
@@ -204,7 +203,10 @@ def process_photoset(train_frame_count, username):
             break
 
     # Train model after getting photos
-    train_model()  
+    train_model()
+    if username in settings['rec_users']:
+        del settings['rec_users'][username]
+    settings['rec_users'].append(username)
     sflag_recognition = False
     start_rec_thread()
 
@@ -222,7 +224,7 @@ def start_tbot_thread():
 
 def start_photoset_thread(train_frame_count, username):
     t_photoset = threading.Thread(
-        target=process_photoset,
+        target=process_photoset_and_train,
         args=(train_frame_count, username,))
     t_photoset.setName('Photoset')
     t_photoset.daemon = True
