@@ -15,9 +15,9 @@
 
 <form action="/train" method="POST">
   <label>Параметры обучения: </label><br>
-  <label>Имя: <input type="text" name="train_name"><br></label>
-  <label>Фотографий для тренировки: <input type="number" name="train_frame_count" min="10" max="100"><br></label>
-  <input type="submit" value="Начать процесс получения фотографий">
+  <label>Имя: <input type="text" name="train_name" required placeholder="Любой идентификатор"><br></label>
+  <label>Фотографий для тренировки: <input type="number" name="train_frame_count" min="10" max="100" value="30"><br></label>
+  <input type="submit" value="Начать...">
 </form>
 
 {% if photo_is_ready %}

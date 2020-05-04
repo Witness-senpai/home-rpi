@@ -11,22 +11,20 @@ from detector import CASCADE_PATH, face_demo
 # Path for face image database
 MODEL_PATH = 'database/model/model.yml'
 TEMP_IMG_PATH = 'database/_temp'
-SAMPLES_FOR_TRAINING = 50
 FONT = cv2.FONT_HERSHEY_SIMPLEX
+
+recognizer = cv2.face.LBPHFaceRecognizer_create()
+faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
         level='INFO',
         format='%(asctime)s %(levelname)s: %(module)s: %(funcName)s() %(lineno)d: %(message)s')
 
-def main():
-    face_demo()
-    save_imgs_from_cam()
-
-    recognizer = cv2.face.LBPHFaceRecognizer_create()
+def train_model():
     detector = cv2.CascadeClassifier(CASCADE_PATH)
 
-    logger.info('Training faces. Wait...')
+    logger.info('Start training faces...')
     faces, ids = get_imgs_and_labels(TEMP_IMG_PATH, detector)
     recognizer.train(faces, np.array(ids))
 
@@ -53,10 +51,6 @@ def get_imgs_and_labels(path, detector):
             ids.append(_id)
 
     return face_samples, ids
-
-recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read(MODEL_PATH)
-faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
 
 def one_frame_detect_face(
         frame,

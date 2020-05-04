@@ -12,7 +12,7 @@ from flask import Flask, render_template, Response, request, redirect
 import cv2
 
 from detector import CASCADE_PATH
-from trainer import MODEL_PATH, one_frame_detect_face
+from trainer import MODEL_PATH, one_frame_detect_face, train_model
 from recognizer import one_frame_recognition
 import tools
 from tbot.start import bot_start
@@ -172,17 +172,18 @@ def process_photoset(train_frame_count, username):
     of faces for training. Output frame web interface output only with faces
     """
     logger.info('Start photoset')
-    global outFrame, cam, sflag_recognition, settings
+    global outFrame, cam, sflag_recognition, settings, ready
     sflag_recognition = True # Stop recognition thread
     minWinSize = (100, 100)
     scaleFactor = 1.5
     minNeighbors = 5
     n_frame = 0
     while True:
+        ready = False
         try:
             ret, frame = cam.read()
             frame = cv2.flip(frame, int(settings['orientation']))
-            outFrame, isdetect = one_frame_detect_face(
+            frame, isdetect = one_frame_detect_face(
                 frame,
                 scaleFactor,
                 minNeighbors,
@@ -191,16 +192,21 @@ def process_photoset(train_frame_count, username):
                 n_frame,
                 train_frame_count,
             )
+            outFrame = frame
             if isdetect:
                 n_frame += 1
         except Exception as ex:
             logger.warning(ex)
             continue
-        
-        if n_frame >= train_frame_count:
+        ready = True
+        time.sleep(0.0001)
+        if n_frame > train_frame_count:
             break
-    
+
+    # Train model after getting photos
+    train_model()  
     sflag_recognition = False
+    start_rec_thread()
 
 def start_rec_thread():
     t_recognition = threading.Thread(target=recognition)

@@ -20,8 +20,11 @@ logging.basicConfig(
         format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read(MODEL_PATH)
 faceCascade = cv2.CascadeClassifier(CASCADE_PATH)
+try:
+    recognizer.read(MODEL_PATH)
+except Exception as ex:
+    logger.warning(ex)
 
 def one_frame_recognition(
         frame,
