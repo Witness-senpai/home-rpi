@@ -14,9 +14,9 @@ import cv2
 from detector import CASCADE_PATH
 from trainer import MODEL_PATH, one_frame_detect_face, train_model
 from recognizer import one_frame_recognition
-import tools
 from tbot.start import bot_start
 from tbot.tbot import send_message
+import tools
 
 settings = tools.load_settings()
 
@@ -33,14 +33,8 @@ app = Flask(__name__)
 
 # Flag to stop iunfinity Recognition thread
 sflag_recognition = False
-# Frame to output after recognition
-flip = -1
-# If True -- recognition is enable
-do_reconize = True
 outFrame = 0
 ready = True
-widht = 1024
-height = 720
 cam = cv2.VideoCapture(0)
 cam.set(3, int(settings['resolution'].split('x')[0])) # set Width
 cam.set(4, int(settings['resolution'].split('x')[1])) # set Height
@@ -81,13 +75,15 @@ def process_settings():
     recognition_status = request.form.get('recognition_status')
     screenshot = request.form.get('screenshot')
     telegram_token = request.form.get('telegram_token')
+    to_default_settings = request.form.get('to_default_settings')
     logger.info(request.form)
+
+    settings = tools.load_settings()
 
     if screenshot:
         ret, frame = cam.read()
         frame = cv2.flip(frame, int(settings['orientation']))
         cv2.imwrite('database/cam_content/photo.jpg', frame)
-
     if telegram_token:
         settings['telegram_token'] = telegram_token
         try:
@@ -113,9 +109,14 @@ def process_settings():
     if recognition_status:
         settings['recognition_status'] = recognition_status
         logger.info(f'Change recognoition status: {recognition_status}')
-    
-    tools.save_settings(settings)
-    logging.info(f'All settings: {settings}')
+
+    if to_default_settings:
+        tools.to_default()
+        settings = tools.load_settings()
+    else:
+        tools.save_settings(settings)
+        logging.info(f'All settings: {settings}')
+
     return render_template('index.html', **settings)
 
 def generate():

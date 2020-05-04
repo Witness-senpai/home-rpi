@@ -29,8 +29,13 @@
   <label>Действия при обнаружении постороннего: </label><br>
   <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
   <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
-  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram {% if telebot_username %}@{{ telebot_username }}{% endif %}, token=</label>
-  <label><input type="text" name="telegram_token" value="{% if telegram_token %}{{ telegram_token }}{% else %}Bot token{% endif %}"><br></label>
+  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram{% if telebot_username %} @{{ telebot_username }}{% endif %}, token=</label>
+  <label><input type="text" name="telegram_token" 
+    {% if telegram_token %}
+      value="{{ telegram_token }}"
+    {% else %}
+      placeholder="Bot token"
+    {% endif %}><br></label>
   <input type="submit" value="OK">
 </form>
 
@@ -63,17 +68,40 @@
 
 <form action="/process_settings" method="POST">
   <label>Режим распознавания: </label>
-  <label><input type="radio" name="recognition_status" value="True" {% if recognition_status == 'True' %}checked{% endif %}>Да</label>
-  <label><input type="radio" name="recognition_status" value="False" {% if recognition_status == 'False' %}checked{% endif %}>Нет</label>
+  {% if rec_users %}
+    <label><input type="radio" name="recognition_status" value="True" {% if recognition_status == 'True' %}checked{% endif %}>Да</label>
+    <label><input type="radio" name="recognition_status" value="False" {% if recognition_status == 'False' %}checked{% endif %}>Нет</label>
+  {% else %}
+    <label>[НЕДОСТУПЕН], сначала необходимо обучить модель.</label>
+  {% endif %}
   <input type="submit" value="OK">
 </form>
 
-<ul id="navbar">
-      <li><a href="/--">[Status]</a></li>
-      <li><a href="/--">[Storage]</a></li>
-      <li><a href="/--">[Reboot]</a></li>
-      <li><a href="/--">[Stop]</a></li>
-</ul>
+<form action="/process_settings" method="POST">
+  <label></label>
+  <input type="submit" name="to_default_settings" value="Сбросить настройки">
+</form>
+
+<form action="/process_settings" method="POST"></form>
+  <ul id="navbar">
+        <li><a href="/--">[Status]</a></li>
+        <li><a href="/--">[Storage]</a></li>
+        <li><a href="/--">[Reboot]</a></li>
+        <li><a href="/--">[To default]</a></li>
+  </ul>
+</form>
+
+<script>
+  function to_default_settings() {
+    var txt;
+    if (confirm("Вы уверены, что хотите установить настройки по умолчанию?")) {
+      txt = "Да";
+    } else {
+      txt = "Отмена";
+    }
+    document.getElementById("demo").innerHTML = txt;
+  }
+  </script>
 
 </body>
 </html>
