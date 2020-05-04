@@ -201,12 +201,12 @@ def process_photoset_and_train(train_frame_count, username):
         time.sleep(0.0001)
         if n_frame > train_frame_count:
             break
-
     # Train model after getting photos
     train_model(user_id=len(settings['rec_users']))
     if username in settings['rec_users']:
         del settings['rec_users'][username]
     settings['rec_users'].append(username)
+    tools.save_settings(settings)
     sflag_recognition = False
     start_rec_thread()
 

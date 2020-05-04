@@ -31,6 +31,7 @@ def train_model(user_id):
 
     logger.info('Start training faces...')
     faces, ids = get_imgs_and_labels(TEMP_IMG_PATH, detector, user_id)
+
     recognizer.train(faces, np.array(ids))
 
     logger.info(f'Training is done! Saving model to {MODEL_PATH}')
@@ -43,7 +44,6 @@ def get_imgs_and_labels(path, detector, user_id):
     image_paths = [os.path.join(path, f) for f in os.listdir(path) if f != '.gitkeeper']     
     face_samples=[]
     ids = [user_id] * len(image_paths)
-
     for image_path in image_paths:
         img_PIL = Image.open(image_path).convert('L') # convert it to grayscale
         img_numpy = np.array(img_PIL,'uint8')
