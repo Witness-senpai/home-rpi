@@ -1,8 +1,10 @@
 database/_temp
-database/cam_content
 database/model
 recognizer/__pycache__
 server/__pycache__/
 tools/__pycache__/
 
 tbot/__pycache__/
+
+*.JPG
+*.AVI
