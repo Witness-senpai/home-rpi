@@ -6,12 +6,10 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from detector import CASCADE_PATH, face_demo
+from recognizer import CASCADE_PATH, MODEL_PATH, FONT
 
 # Path for face image database
-MODEL_PATH = 'database/model/model.yml'
 TEMP_IMG_PATH = 'database/_temp'
-FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 faceCascade = cv2.CascadeClassifier(CASCADE_PATH)

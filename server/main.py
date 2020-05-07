@@ -11,9 +11,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 from flask import Flask, render_template, Response, request, redirect
 import cv2
 
-from detector import CASCADE_PATH
-from trainer import MODEL_PATH, one_frame_detect_face, train_model
-from recognizer import one_frame_recognition
+from trainer import one_frame_detect_face, train_model
+from recognizer import one_frame_recognition, CASCADE_PATH, MODEL_PATH
 from tbot.start import bot_start
 from tbot.tbot import send_message
 import tools
@@ -22,8 +21,7 @@ settings = tools.load_settings()
 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 IP = 'localhost'
-PORT = 8080
-
+PORT = 5000
 logger = logging.getLogger(__name__)
 logging.basicConfig(
         level='INFO',

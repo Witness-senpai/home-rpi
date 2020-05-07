@@ -8,10 +8,8 @@ import random
 from flask import Flask, render_template, Response
 import cv2
 
-from detector import CASCADE_PATH
-from trainer import MODEL_PATH
-
-
+MODEL_PATH = 'database/model/model.yml'
+CASCADE_PATH = '/home/pi/Public/opencv/opencv-4.2.0/data/haarcascades/haarcascade_frontalface_default.xml' 
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 
 logger = logging.getLogger(__name__)
