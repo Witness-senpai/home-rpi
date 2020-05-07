@@ -13,83 +13,77 @@
 <h1 align="center">Home secure system on RPi 4</h1>
 <h3 align="center"><img src="{{ url_for('video_feed') }}" width="50%"></h3>
 
-<form action="/train" method="POST">
-  <button>
-    <a href="{{ url_for('train') }}">Добавить пользователя</a>
-  </button>
-</label>
-</form>
+<div class="settings">
+  <form action="/train" method="POST">
+    <input type="submit" name="add_user" value="Добавить пользователя">
+  </form>
+</div>
+
+<div class="settings">
+  <form action="/process_settings" method="POST">
+    <input type="submit" name="screenshot" value="Сделать снимок">
+  </form>
+</div>
 
 <form action="/process_settings" method="POST">
-  <label></label>
-  <input type="submit" name="screenshot" value="screenshot">
-</form>
+  <div class="settings">
+    <label>Действия при обнаружении 
+      <select  name="target_user">
+        <option disabled>target</option>
+        <option value="unknown" {% if target_user == 'unknown' %}selected{% endif %}>unknown</option>
+        {% for usr in rec_users %}
+          <option value="{{ usr }}" {% if target_user == usr %}selected{% endif %}>{{ usr }}</option>
+        {% endfor %}
+    </select>
 
-<form action="/process_settings" method="POST">
-  <label>Действия при обнаружении постороннего: </label><br>
-  <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
-  <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
-  <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram{% if telebot_username %} @{{ telebot_username }}{% endif %}, token=</label>
-  <label><input type="text" name="telegram_token" 
-    {% if telegram_token %}
-      value="{{ telegram_token }}"
+    </label><br>
+    <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
+    <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
+    <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram{% if telebot_username %} @{{ telebot_username }}{% endif %}, token=</label>
+    <label><input class="in" type="text" name="telegram_token" 
+      {% if telegram_token %}
+        value="{{ telegram_token }}"
+      {% else %}
+        placeholder="Bot token"
+      {% endif %}><br></label>
+
+    <label>Разрешение видео: </label>
+      <select name="resolution">
+        <option disabled>Resolution</option>
+        <option  value="480x360" {% if resolution == '480x360'%}selected{% endif %}>480x360</option>
+        <option  value="640x480" {% if resolution == '640x480'%}selected{% endif %}>640x480</option>
+        <option  value="800x600" {% if resolution == '800x600'%}selected{% endif %}>800x600</option>
+        <option  value="1024x768" {% if resolution == '1024x768'%}selected{% endif %}>1024x768</option>
+        <option  value="1280x960" {% if resolution == '1280x960'%}selected{% endif %}>1280x960</option>
+        <option  value="1440x1080" {% if resolution == '1440x1080'%}selected{% endif %}>1440x1080</option>
+        <option  value="1600x1200" {% if resolution == '1600x1200'%}selected{% endif %}>1600x1200</option>
+        <option  value="1920x1440" {% if resolution == '1920x1440'%}selected{% endif %}>1920x1440</option>
+      </select>
+
+    <br><label>Ориентация видео:</label>
+    <select  name="orientation">
+      <option disabled>Orientation</option>
+      <option value="-1" {% if orientation == '-1' %}selected{% endif %}>-1</option>
+      <option value="0" {% if orientation == '0' %}selected{% endif %}>0</option>
+      <option value="1" {% if orientation == '1' %}selected{% endif %}>1</option>
+    </select>
+
+    <br><label>Режим распознавания: </label>
+    {% if rec_users %}
+      <label><input type="radio" name="recognition_status" value="True" {% if recognition_status == 'True' %}checked{% endif %}>Да</label>
+      <label><input type="radio" name="recognition_status" value="False" {% if recognition_status == 'False' %}checked{% endif %}>Нет</label>
     {% else %}
-      placeholder="Bot token"
-    {% endif %}><br></label>
-  <input type="submit" value="OK">
+      <label>[НЕДОСТУПЕН], сначала необходимо обучить модель.</label>
+    {% endif %}
+    <br><input type="submit" value="Сохранить настройки">
+  </div>
 </form>
 
-<form action="/process_settings" method="POST">
-  <label>Разрешение видео: </label>
-  <select name="resolution">
-    <option disabled>Resolution</option>
-    <option  value="480x360" {% if resolution == '480x360'%}selected{% endif %}>480x360</option>
-    <option  value="640x480" {% if resolution == '640x480'%}selected{% endif %}>640x480</option>
-    <option  value="800x600" {% if resolution == '800x600'%}selected{% endif %}>800x600</option>
-    <option  value="1024x768" {% if resolution == '1024x768'%}selected{% endif %}>1024x768</option>
-    <option  value="1280x960" {% if resolution == '1280x960'%}selected{% endif %}>1280x960</option>
-    <option  value="1440x1080" {% if resolution == '1440x1080'%}selected{% endif %}>1440x1080</option>
-    <option  value="1600x1200" {% if resolution == '1600x1200'%}selected{% endif %}>1600x1200</option>
-    <option  value="1920x1440" {% if resolution == '1920x1440'%}selected{% endif %}>1920x1440</option>
-   </select>
-  <input type="submit" value="OK">
-</form>
-
-<form action="/process_settings" method="POST">
-  <label>Ориентация видео:</label>
-  <select  name="orientation">
-    <option disabled>Orientation</option>
-    <option value="-1" {% if orientation == '-1' %}selected{% endif %}>-1</option>
-    <option value="0" {% if orientation == '0' %}selected{% endif %}>0</option>
-    <option value="1" {% if orientation == '1' %}selected{% endif %}>1</option>
-   </select>
-  <input type="submit" value="OK">
-</form>
-
-<form action="/process_settings" method="POST">
-  <label>Режим распознавания: </label>
-  {% if rec_users %}
-    <label><input type="radio" name="recognition_status" value="True" {% if recognition_status == 'True' %}checked{% endif %}>Да</label>
-    <label><input type="radio" name="recognition_status" value="False" {% if recognition_status == 'False' %}checked{% endif %}>Нет</label>
-  {% else %}
-    <label>[НЕДОСТУПЕН], сначала необходимо обучить модель.</label>
-  {% endif %}
-  <input type="submit" value="OK">
-</form>
-
-<form action="/process_settings" method="POST">
-  <label></label>
-  <input type="submit" name="to_default_settings" value="Сбросить настройки">
-</form>
-
-<form action="/process_settings" method="POST"></form>
-  <ul id="navbar">
-        <li><a href="/--">[Status]</a></li>
-        <li><a href="/--">[Storage]</a></li>
-        <li><a href="/--">[Reboot]</a></li>
-        <li><a href="/--">[To default]</a></li>
-  </ul>
-</form>
+<div class="settings">
+  <form action="/process_settings" method="POST">
+    <input type="submit" name="to_default_settings" value="Сбросить настройки">
+  </form>
+</div>
 
 <script>
   function to_default_settings() {

@@ -68,6 +68,7 @@ def video_feed():
 @app.route('/process_settings', methods=['GET', 'POST'])
 def process_settings():
     global cam, sflag_recognition, settings
+    target_user = request.form.get('target_user')
     triggers = request.form.getlist('triggers')
     resolution = request.form.get('resolution')
     orientation = request.form.get('orientation')
@@ -93,6 +94,8 @@ def process_settings():
         settings['triggers'] = []
         for el in triggers:
             settings['triggers'].append(el)
+    if target_user:
+        settings['target_user'] = target_user
     if resolution:
         sflag_recognition = True # Stop flag for thread with recognition
         settings['resolution'] = resolution
@@ -136,7 +139,7 @@ def recognition():
     scaleFactor = 1.5
     minNeighbors = 5
     #n_frame = 0
-    temp_trigger = False # Temporary var for testing
+    temp_trigger = True # Temporary var for testing
     while True:
         #n_frame += 1
         if sflag_recognition:
@@ -158,9 +161,10 @@ def recognition():
         except Exception as ex:
             logger.warning(ex)
             continue
-        if 'unknown' in detected_names and temp_trigger and '3' in settings['triggers']:
+        if settings['target_user'] in detected_names and temp_trigger and '3' in settings['triggers']:
             temp_trigger = False
-            send_alert('unknown person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
+            target_user = settings['target_user']
+            send_alert(f'{target_user} person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
     logger.info('Stop recognition...')
