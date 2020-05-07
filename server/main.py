@@ -1,10 +1,10 @@
 import logging
 import time
-import datetime
 import threading
 import sys, os
 import random
 import argparse
+from datetime import datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), '../recognizer'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../tools'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
@@ -83,7 +83,7 @@ def process_settings():
     if screenshot:
         ret, frame = cam.read()
         frame = cv2.flip(frame, int(settings['orientation']))
-        cv2.imwrite('database/cam_content/photo.jpg', frame)
+        make_screenshot(frame)
     if telegram_token:
         settings['telegram_token'] = telegram_token
         try:
@@ -161,10 +161,16 @@ def recognition():
         except Exception as ex:
             logger.warning(ex)
             continue
-        if settings['target_user'] in detected_names and temp_trigger and '3' in settings['triggers']:
+
+        if settings['target_user'] in detected_names and temp_trigger:
+            if '1' in settings['triggers']: # screenshot
+                make_screenshot(frame)
+            if '2' in settings['triggers']: # video
+                start_videowritter_thread(5)
+            if '3' in settings['triggers']: # telegram alert
+                target_user = settings['target_user']
+                send_alert(f'{target_user} person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
             temp_trigger = False
-            target_user = settings['target_user']
-            send_alert(f'{target_user} person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
         ready = True
         time.sleep(0.0001)
     logger.info('Stop recognition...')
@@ -233,6 +239,35 @@ def start_photoset_thread(train_frame_count, username):
     t_photoset.setName('Photoset')
     t_photoset.daemon = True
     t_photoset.start()
+
+def start_videowritter_thread(duration):
+    t_videowritter = threading.Thread(
+        target=video_writter,
+        args=(duration, ))
+    t_videowritter.setName('Video writter')
+    t_videowritter.daemon = True
+    t_videowritter.start()
+
+def video_writter(duration):
+    global outFrame, settings
+    wh = settings['resolution'].split('x')
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    w = int(wh[0])
+    h = int(wh[1])
+    out = cv2.VideoWriter(f'database/cam_content/video/{now}.avi',
+        cv2.VideoWriter_fourcc('M','J','P','G'),
+        20.0, (w, h))
+
+    logger.info(f'Make video recorder {now}')    
+    start = time.time()
+    while (int(time.time()) - start) < duration:
+        out.write(outFrame)
+    logger.info(f'Stop video recorder')    
+
+def make_screenshot(frame):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f'Make screenshoot {now}')
+    cv2.imwrite(f'database/cam_content/photo/{now}.jpg', frame)
 
 def send_alert(text, bynary_photo):
     """
