@@ -4,6 +4,7 @@ import datetime
 import threading
 import sys, os
 import random
+import argparse
 sys.path.append(os.path.join(os.path.dirname(__file__), '../recognizer'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../tools'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
@@ -241,15 +242,29 @@ def send_alert(text, bynary_photo):
     t_tbot_message.daemon = True
     t_tbot_message.start()
 
-def main():
+def main(host, port):
     start_rec_thread()
 
     if settings['telegram_token']:
         start_tbot_thread()
 
-    app.run(host=IP, port=PORT, debug=True,
+    app.run(host=host, port=port, debug=True,
         threaded=True, use_reloader=False)
 
 if __name__ == '__main__':
-    main()
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument(
+        "-i",
+        "--ip",
+        type=str,
+        default=IP,
+        help="Host IP for running server")
+    argparser.add_argument(
+        "-p",
+        "--port",
+        type=str,
+        default=PORT,
+        help=f"Port for running server")
+    args = argparser.parse_args()
+    main(args.ip, args.port)
     
