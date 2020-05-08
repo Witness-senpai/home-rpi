@@ -59,7 +59,7 @@ def one_frame_recognition(
                 confidence = f'{100 - confidence:.1f}%'
             detected_names.append(_id)
             cv2.putText(frame, str(_id), (x+5, y-5), FONT, 1, (255, 255, 255), 2)
-            cv2.putText(frame, str(confidence), (x+5, y+h-5), FONT, 1, (255, 255, 0), 1)
+            # cv2.putText(frame, str(confidence), (x+5, y+h-5), FONT, 1, (255, 255, 0), 1)
 
         timestamp = datetime.datetime.now()
         cv2.putText(

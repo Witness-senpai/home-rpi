@@ -260,7 +260,7 @@ def video_writter():
 
     logger.info(f'Make video recorder {now}')    
     start = time.time()
-    while (int(time.time()) - start) < settings['video_duration']:
+    while (int(time.time()) - start) < int(settings['video_duration']):
         out.write(outFrame)
     logger.info(f'Stop video recorder')    
 

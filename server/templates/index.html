@@ -41,11 +41,11 @@
     <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео 
       <select name="video_duration">
         <option disabled>Resolution</option>
-        <option  value="480x360" {% if video_duration == '5'%}selected{% endif %}>5 sec</option>
-        <option  value="640x480" {% if video_duration == '10'%}selected{% endif %}>10 sec</option>
-        <option  value="800x600" {% if video_duration == '15'%}selected{% endif %}>15 sec</option>
-        <option  value="800x600" {% if video_duration == '20'%}selected{% endif %}>20 sec</option>
-        <option  value="800x600" {% if video_duration == '30'%}selected{% endif %}>30 sec</option>
+        <option  value="5" {% if video_duration == '5'%}selected{% endif %}>5 sec</option>
+        <option  value="10" {% if video_duration == '10'%}selected{% endif %}>10 sec</option>
+        <option  value="15" {% if video_duration == '15'%}selected{% endif %}>15 sec</option>
+        <option  value="20" {% if video_duration == '20'%}selected{% endif %}>20 sec</option>
+        <option  value="30" {% if video_duration == '30'%}selected{% endif %}>30 sec</option>
       </select>
       
       <br></label>
