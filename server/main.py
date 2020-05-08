@@ -76,10 +76,12 @@ def process_settings():
     screenshot = request.form.get('screenshot')
     telegram_token = request.form.get('telegram_token')
     to_default_settings = request.form.get('to_default_settings')
+    video_duration = request.form.get('video_duration')
     logger.info(request.form)
 
     settings = tools.load_settings()
-
+    if video_duration:
+        settings['video_duration'] = video_duration
     if screenshot:
         ret, frame = cam.read()
         frame = cv2.flip(frame, int(settings['orientation']))
@@ -166,7 +168,7 @@ def recognition():
             if '1' in settings['triggers']: # screenshot
                 make_screenshot(frame)
             if '2' in settings['triggers']: # video
-                start_videowritter_thread(5)
+                start_videowritter_thread()
             if '3' in settings['triggers']: # telegram alert
                 target_user = settings['target_user']
                 send_alert(f'{target_user} person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
@@ -240,15 +242,13 @@ def start_photoset_thread(train_frame_count, username):
     t_photoset.daemon = True
     t_photoset.start()
 
-def start_videowritter_thread(duration):
-    t_videowritter = threading.Thread(
-        target=video_writter,
-        args=(duration, ))
+def start_videowritter_thread():
+    t_videowritter = threading.Thread(target=video_writter)
     t_videowritter.setName('Video writter')
     t_videowritter.daemon = True
     t_videowritter.start()
 
-def video_writter(duration):
+def video_writter():
     global outFrame, settings
     wh = settings['resolution'].split('x')
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -260,7 +260,7 @@ def video_writter(duration):
 
     logger.info(f'Make video recorder {now}')    
     start = time.time()
-    while (int(time.time()) - start) < duration:
+    while (int(time.time()) - start) < settings['video_duration']:
         out.write(outFrame)
     logger.info(f'Stop video recorder')    
 

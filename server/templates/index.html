@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
- <link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css">
+ <link href="{{ url_for('static', filename='style4.css')}}" rel="stylesheet" type="text/css">
 <meta name="theme-color" content="#ffffff">
 
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300" rel="stylesheet"> 
@@ -38,7 +38,17 @@
 
     </label><br>
     <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
-    <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео<br></label>
+    <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео 
+      <select name="video_duration">
+        <option disabled>Resolution</option>
+        <option  value="480x360" {% if video_duration == '5'%}selected{% endif %}>5 sec</option>
+        <option  value="640x480" {% if video_duration == '10'%}selected{% endif %}>10 sec</option>
+        <option  value="800x600" {% if video_duration == '15'%}selected{% endif %}>15 sec</option>
+        <option  value="800x600" {% if video_duration == '20'%}selected{% endif %}>20 sec</option>
+        <option  value="800x600" {% if video_duration == '30'%}selected{% endif %}>30 sec</option>
+      </select>
+      
+      <br></label>
     <label><input type="checkbox" name="triggers" value="3" {% if '3' in triggers %}checked{% endif %}>Сообщение в telegram{% if telebot_username %} @{{ telebot_username }}{% endif %}, token=</label>
     <label><input class="in" type="text" name="telegram_token" 
       {% if telegram_token %}
