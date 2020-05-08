@@ -49,3 +49,9 @@ def add_user_to_settings(user):
     if user not in settings['telegram_users']:
         settings['telegram_users'].append(user)
     save_settings(settings)
+
+def set_trigger_flag():
+    logger.info("Trigger_flag to True")
+    settings = load_settings()
+    settings['trigger_flag'] = "True"
+    save_settings(settings)

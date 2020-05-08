@@ -1,1 +1,1 @@
-{"telegram_users": [], "telegram_token": "", "resolution": "640x480", "orientation": "0", "recognition_status": "False", "telebot_username": "", "triggers": [], "rec_users": [], "target_user": "unknown", "video_duration": "5"}
+{"telegram_users": [], "telegram_token": "", "resolution": "640x480", "orientation": "0", "recognition_status": "False", "telebot_username": "", "triggers": [], "rec_users": [], "target_user": "unknown", "video_duration": "5", "trigger_flag": "True"}

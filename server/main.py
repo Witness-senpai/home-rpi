@@ -20,6 +20,7 @@ import tools
 
 settings = tools.load_settings()
 
+bot_running = True
 FONT = cv2.FONT_HERSHEY_SIMPLEX
 IP = 'localhost'
 PORT = 5000
@@ -37,10 +38,6 @@ ready = True
 cam = cv2.VideoCapture(0)
 cam.set(3, int(settings['resolution'].split('x')[0])) # set Width
 cam.set(4, int(settings['resolution'].split('x')[1])) # set Height
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html', **settings)
 
 @app.route('/train', methods=['GET', 'POST'])
 def train():
@@ -65,9 +62,10 @@ def video_feed():
     return Response(generate(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/process_settings', methods=['GET', 'POST'])
 def process_settings():
-    global cam, sflag_recognition, settings
+    global cam, sflag_recognition, settings, bot_running
     target_user = request.form.get('target_user')
     triggers = request.form.getlist('triggers')
     resolution = request.form.get('resolution')
@@ -86,8 +84,9 @@ def process_settings():
         ret, frame = cam.read()
         frame = cv2.flip(frame, int(settings['orientation']))
         make_screenshot(frame)
-    if telegram_token:
+    if telegram_token and not bot_running:
         settings['telegram_token'] = telegram_token
+        bot_running = True
         try:
             start_tbot_thread()
         except Exception as ex:
@@ -104,7 +103,7 @@ def process_settings():
         wh = resolution.split('x')
         cam.set(3, int(wh[0])) # set Width
         cam.set(4, int(wh[1])) # set Height
-        logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
+        #logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
         sflag_recognition = False 
         start_rec_thread() # Start thread with recognition
     if orientation:
@@ -140,14 +139,13 @@ def recognition():
     minWinSize = (100, 100)
     scaleFactor = 1.5
     minNeighbors = 5
-    #n_frame = 0
-    temp_trigger = True # Temporary var for testing
+    n_frame = 0
     while True:
-        #n_frame += 1
         if sflag_recognition:
             break
         ready = False
         try:
+            n_frame += 1
             ret, frame = cam.read()
             frame = cv2.flip(frame, int(settings['orientation']))
             if settings['recognition_status'] == "True":
@@ -163,8 +161,10 @@ def recognition():
         except Exception as ex:
             logger.warning(ex)
             continue
-
-        if settings['target_user'] in detected_names and temp_trigger:
+        
+        if n_frame == 100:
+            settings = tools.load_settings()
+        if settings['target_user'] in detected_names and settings['trigger_flag'] == "True":
             if '1' in settings['triggers']: # screenshot
                 make_screenshot(frame)
             if '2' in settings['triggers']: # video
@@ -172,7 +172,9 @@ def recognition():
             if '3' in settings['triggers']: # telegram alert
                 target_user = settings['target_user']
                 send_alert(f'{target_user} person is detected!', cv2.imencode('.jpg', frame)[1].tostring())
-            temp_trigger = False
+            settings['trigger_flag'] = "False"
+            logger.info("Trigger_flag to False")
+            tools.save_settings(settings)
         ready = True
         time.sleep(0.0001)
     logger.info('Stop recognition...')
@@ -229,9 +231,9 @@ def start_rec_thread():
     t_recognition.start()
 
 def start_tbot_thread():
+    logger.info('TBot starting...')
     t_tbot = threading.Thread(target=bot_start)
     t_tbot.setName('Telegram bot')
-    t_tbot.daemon = True
     t_tbot.start()
 
 def start_photoset_thread(train_frame_count, username):

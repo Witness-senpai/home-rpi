@@ -40,7 +40,7 @@
     <label><input type="checkbox" name="triggers" value="1" {% if '1' in triggers %}checked{% endif %}>Скриншот<br></label>
     <label><input type="checkbox" name="triggers" value="2" {% if '2' in triggers %}checked{% endif %}>Видео 
       <select name="video_duration">
-        <option disabled>Resolution</option>
+        <option disabled>Duration</option>
         <option  value="5" {% if video_duration == '5'%}selected{% endif %}>5 sec</option>
         <option  value="10" {% if video_duration == '10'%}selected{% endif %}>10 sec</option>
         <option  value="15" {% if video_duration == '15'%}selected{% endif %}>15 sec</option>
@@ -89,23 +89,20 @@
   </div>
 </form>
 
+<!--
+<div class="settings">
+  <a href="file://192.168.0.2/pishare/home-rpi/database/cam_content/">
+    <button>Открыть хранилище файлов</button>
+  </a>
+</div>
+-->
+
 <div class="settings">
   <form action="/process_settings" method="POST">
     <input type="submit" name="to_default_settings" value="Сбросить настройки">
   </form>
 </div>
 
-<script>
-  function to_default_settings() {
-    var txt;
-    if (confirm("Вы уверены, что хотите установить настройки по умолчанию?")) {
-      txt = "Да";
-    } else {
-      txt = "Отмена";
-    }
-    document.getElementById("demo").innerHTML = txt;
-  }
-  </script>
 
 </body>
 </html>

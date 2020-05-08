@@ -8,7 +8,6 @@ logging.basicConfig(
         format='%(asctime)s %(levelname)s: %(module)s: %(message)s')
 
 def bot_start():
-    logger.info('Bot starting...')
     while True:
         try:
             main()
