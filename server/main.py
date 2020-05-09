@@ -78,10 +78,8 @@ def process_settings():
     del_user = request.form.get('del_user')
     logger.info(request.form)
 
-    print( request.form)
     settings = tools.load_settings()
     if del_user:
-        print('11111111')
         for i, usr in enumerate(settings['rec_users']):
             if usr == del_user:
                 del settings['rec_users'][i]
@@ -315,4 +313,3 @@ if __name__ == '__main__':
         help=f"Port for running server")
     args = argparser.parse_args()
     main(args.ip, args.port)
-    
