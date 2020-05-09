@@ -75,9 +75,16 @@ def process_settings():
     telegram_token = request.form.get('telegram_token')
     to_default_settings = request.form.get('to_default_settings')
     video_duration = request.form.get('video_duration')
+    del_user = request.form.get('del_user')
     logger.info(request.form)
 
+    print( request.form)
     settings = tools.load_settings()
+    if del_user:
+        print('11111111')
+        for i, usr in enumerate(settings['rec_users']):
+            if usr == del_user:
+                del settings['rec_users'][i]
     if video_duration:
         settings['video_duration'] = video_duration
     if screenshot:
@@ -103,7 +110,7 @@ def process_settings():
         wh = resolution.split('x')
         cam.set(3, int(wh[0])) # set Width
         cam.set(4, int(wh[1])) # set Height
-        #logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
+        logger.info(f'Change resolution to {wh[0]}x{wh[1]}')
         sflag_recognition = False 
         start_rec_thread() # Start thread with recognition
     if orientation:

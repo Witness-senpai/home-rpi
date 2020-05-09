@@ -21,6 +21,19 @@
 
 <div class="settings">
   <form action="/process_settings" method="POST">
+    <input type="submit" name="to_del_user" value="Удалить пользователя">
+    <select  name="del_user">
+      <option disabled>User to delete</option>
+      {% for usr in rec_users %}
+        <option value="{{ usr }}" >{{ usr }}</option>
+      {% endfor %}
+      </select>
+  </form>
+</div>
+
+
+<div class="settings">
+  <form action="/process_settings" method="POST">
     <input type="submit" name="screenshot" value="Сделать снимок">
   </form>
 </div>
